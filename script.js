@@ -28,3 +28,33 @@ for (const form of document.querySelectorAll('.enquiry-form')) {
     form.querySelector('.form-status').textContent = 'Your email draft is ready. Please review and send it in your email app. If your app did not open, use the email address alongside this form.';
   });
 }
+for (const timer of document.querySelectorAll('[data-countdown]')) {
+  const target = Date.parse(timer.dataset.countdown);
+  if (!Number.isFinite(target)) continue;
+  const days = timer.querySelector('[data-cd="days"]');
+  const hours = timer.querySelector('[data-cd="hours"]');
+  const minutes = timer.querySelector('[data-cd="minutes"]');
+  const seconds = timer.querySelector('[data-cd="seconds"]');
+  const label = timer.querySelector('.countdown-label');
+  const pad = n => String(Math.max(0, Math.floor(n))).padStart(2, '0');
+  let intervalId;
+  const update = () => {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      days.textContent = '00';
+      hours.textContent = '00';
+      minutes.textContent = '00';
+      seconds.textContent = '00';
+      if (label) label.textContent = 'Course is now live';
+      clearInterval(intervalId);
+      return;
+    }
+    const totalSeconds = Math.floor(diff / 1000);
+    days.textContent = pad(totalSeconds / 86400);
+    hours.textContent = pad((totalSeconds % 86400) / 3600);
+    minutes.textContent = pad((totalSeconds % 3600) / 60);
+    seconds.textContent = pad(totalSeconds % 60);
+  };
+  update();
+  intervalId = setInterval(update, 1000);
+}
