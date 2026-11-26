@@ -340,27 +340,45 @@ h1 em, h2 em {
 }
 
 .academy-page .button.gold {
-  background: var(--ochre);
-  border-color: var(--ochre);
+  background: linear-gradient(125deg, #c7963d 0%, var(--ochre) 42%, #f4cf6e 100%);
+  border: 0;
   color: var(--brown);
 }
 
 .academy-page .button.gold:hover {
-  background: #c1923d;
-  border-color: #c1923d;
+  background: linear-gradient(125deg, #b8872f 0%, #c89a44 42%, #fae08b 100%);
   color: var(--brown);
 }
 
 .academy-page .button.brown-gold {
   background: linear-gradient(125deg, var(--brown) 0%, #68422b 52%, var(--ochre) 100%);
-  border-color: #6b452c;
+  border: 0;
   color: var(--white);
   text-shadow: 0 1px 2px rgba(27, 16, 10, .35);
 }
 
 .academy-page .button.brown-gold:hover {
   background: linear-gradient(125deg, #4b3025 0%, #7d5034 48%, #deb15c 100%);
-  border-color: #7d5034;
+}
+
+.academy-page .academy-hero .actions .button {
+  width: 220px;
+  max-width: 100%;
+  padding: 14px 32px;
+  border: 0;
+}
+
+.academy-page .academy-hero .actions .button.secondary {
+  background: rgba(60, 38, 30, .08);
+  color: var(--brown);
+}
+
+.academy-page .academy-hero .actions .button.secondary:hover {
+  background: rgba(60, 38, 30, .14);
+}
+
+.academy-page #why .actions .button {
+  border: 0;
 }
 
 .academy-page .preorder-cta {
