@@ -362,10 +362,17 @@ h1 em, h2 em {
 }
 
 .academy-page .academy-hero .actions .button {
-  width: 220px;
-  max-width: 100%;
-  padding: 14px 32px;
+  width: auto;
+  min-width: 156px;
+  padding: 13px 25px;
   border: 0;
+}
+
+@media (max-width: 760px) {
+  .academy-page .academy-hero .actions .button {
+    min-width: 142px;
+    padding: 13px 21px;
+  }
 }
 
 .academy-page .academy-hero .actions .button.secondary {
