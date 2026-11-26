@@ -31,7 +31,7 @@ app.use(
     extensions: ['html'],
     dotfiles: 'ignore',
     setHeaders: (res, filePath) => {
-      if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+      if (filePath.includes(`${path.sep}assets${path.sep}`) && !filePath.endsWith('.js')) {
         res.setHeader('Cache-Control', 'public, max-age=604800');
       }
     },

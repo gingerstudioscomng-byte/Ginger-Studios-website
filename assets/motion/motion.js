@@ -7,7 +7,7 @@
   const button = stage.querySelector('.toggle');
   const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
   const params = new URLSearchParams(location.search);
-  const duration = 8260;
+  const duration = 8560;
   const endStart = 6060;
   const enter = 'cubic-bezier(.16,1,.3,1)';
   const exit = 'cubic-bezier(.6,0,.83,.48)';
@@ -25,7 +25,7 @@
 
   function track(element, frames) {
     const keyframes = frames.map(([time, values]) => ({ offset: time / duration, ...values }));
-    const animation = element.animate(keyframes, { duration, fill: 'both' });
+    const animation = element.animate(keyframes, { duration, fill: 'both', iterations: Infinity });
     animation.pause();
     animation.currentTime = 0;
     tracks.push(animation);
@@ -99,7 +99,8 @@
     [0, { opacity: 0 }],
     [endStart, { opacity: 0, easing: enter }],
     [endStart + 340, { opacity: 1 }],
-    [duration, { opacity: 1 }]
+    [duration - 300, { opacity: 1, easing: exit }],
+    [duration, { opacity: 0 }]
   ]);
 
   titleHit('.course-name', endStart + 80, 'translateY(48%)', 'translateY(-3%)', 'translateY(0)');
@@ -125,10 +126,23 @@
   }
 
   function syncScenes() {
-    const time = Number(clock.currentTime);
-    const isEnd = time >= endStart + 550;
+    const loopTime = Number(clock.currentTime) % duration;
+    const isEnd = loopTime >= endStart + 550 && loopTime < duration - 120;
     endScene.inert = !isEnd;
     endScene.setAttribute('aria-hidden', String(!isEnd));
+  }
+
+  function scheduleSceneSync() {
+    clearTimeout(endTimer);
+    if (!(wantsPlayback && visible && ready && !document.hidden)) return;
+    const loopTime = Number(clock.currentTime) % duration;
+    const delay = loopTime < endStart + 550
+      ? (endStart + 550 - loopTime) + 16
+      : (duration - loopTime) + 16;
+    endTimer = setTimeout(() => {
+      syncScenes();
+      scheduleSceneSync();
+    }, delay);
   }
 
   function seek(time) {
@@ -141,28 +155,19 @@
 
   function syncPlayback() {
     clearTimeout(endTimer);
-    const time = Number(clock.currentTime);
-    const play = wantsPlayback && visible && ready && !document.hidden && time < duration;
+    const play = wantsPlayback && visible && ready && !document.hidden;
     if (play) {
       tracks.forEach(animation => animation.play());
-      if (time < endStart + 550) {
-        endTimer = setTimeout(syncScenes, endStart + 600 - time);
-      }
+      scheduleSceneSync();
     } else {
       tracks.forEach(animation => animation.pause());
     }
-    updateButton(time >= duration ? 'replay' : play ? 'pause' : 'play');
+    updateButton(play ? 'pause' : 'play');
     syncScenes();
   }
 
-  clock.onfinish = () => {
-    wantsPlayback = false;
-    updateButton('replay');
-    syncScenes();
-  };
-
   button.addEventListener('click', () => {
-    if (clock.currentTime >= duration || (motionPreference.matches && clock.currentTime === 1370)) {
+    if (motionPreference.matches && Number(clock.currentTime) === 1370) {
       seek(0);
     }
     wantsPlayback = !wantsPlayback;
